@@ -2,53 +2,32 @@ const { json } = require('express');
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+var incomingJson = {}; // Declare a varaible to hold Json data from [post] and forward it to [get]
+
+
+/* POST method */
+router.post('/', function(req, res) {
+  incomingJson = req.body;
+  console.log(req.body);
+});
+
+/* GET method */
 router.get('/', function(req, res, next) {
-   
-    var val = "";
     
-    function generator(){
-
+    // validate presence of data and forward it when receive a get request to /api
+    function forwardData(){
       try{ 
-      const spawn = require('child_process').spawn;
-      // Call the python process 
-      const  py = spawn('python3', ['numGen.py']);
-        
-      resultString = '';
-        
-    //   // As the stdout data stream is chunked,
-    //   // we need to concat all the chunks.
-    //   py.stdout.on('data', function (stdData) {
-    //     resultString = stdData.toString();
-    //   });
-        
-    //   py.stdout.on('end', function () {
-    //     // Parse the string as JSON when stdout
-    //     // data stream ends
-    //     let resultData = JSON.parse(resultString);
-        
-    //     val = resultData['value']; // can delete...
-        
-        // PLACEHOLDER JSON VARIABLE, TO DELETE...
-        const resultData = {
-            right: 0,
-            left: 0,
-            up: 0,
-            down: 1,
-            tap: 0
-          };
-
-        console.log('Sending JSON data to /api');
-        return res.json(resultData);
-    //   }); 
+        const resultData = incomingJson;
+        console.log(resultData);
+        res.json(resultData);
       }
       catch(error){
         console.log(error);
-        return res.send('Error: ', error);
+        res.send('Error: ', error);
       }
     }
 
-    generator();
+    forwardData();
     
 });
 
