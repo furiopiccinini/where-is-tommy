@@ -25,13 +25,20 @@ Author: Furio Piccinini [Email](furiopiccinini@gmail.com)
 Date: Apr 2022
 Version: 0.3
 
-## Getting Started with Create React App
+## Node.js server start
+In the api folder, you can run:
+### `npm install`
+This will install all the dependencies.
+Than you can run:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### `npm start`
 
-## Available Scripts
+The server will be working on [http://localhost:9000](http://localhost:9000).
+The endpoint used in this project is [/api](http://localhost/9000/api), so you can test it with Postman or Curl.
 
-In the project directory, you can run:
+## Client Available Scripts
+
+In the client directory, you can run:
 
 ### `npm start`
 
