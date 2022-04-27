@@ -5,12 +5,9 @@ The project is made with different tecnologies:
 
 ### ----- Nicla Sense ME board
 ###             |
-###             |
 ###         Python script
 ###             |
-###             |
 ###         Node.js server
-###             |
 ###             |
 ###         React app
 
