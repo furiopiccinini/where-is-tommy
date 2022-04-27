@@ -3,13 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var cors = require('cors');
+var cors = require('cors'); // CORS module for Cross Origin Resource Sharing
 var bodyParser = require('body-parser');
 
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var apiRouter = require('./routes/api');
+var apiRouter = require('./routes/api'); // require new route created
 var demoRouter = require('./routes/demo');
 
 var app = express();
@@ -22,14 +22,14 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors()); // cors instantiation
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/api', apiRouter);
+app.use('/api', apiRouter); // new route to handle incoming JSON data
 app.use('/demo', demoRouter);
 
 // catch 404 and forward to error handler

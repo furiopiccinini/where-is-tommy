@@ -1,3 +1,30 @@
+# Tales for Makers - Where is Tommy?
+## Project: parking meter remake
+
+The project is made with different tecnologies:
+
+### ----- Nicla Sense ME board
+###             |
+###             |
+###         Python script
+###             |
+###             |
+###         Node.js server
+###             |
+###             |
+###         React app
+
+At the root we have a Nicla Sense ME firmware to create the motion gestures sensor. Sensor data
+are integrated to the required range of values and converted in a Json 
+string. The string is sent to the host via the USB-Serial interface and sent via HTTP to a
+Node.js server endpoint.
+
+This App.js is the main React file, which fetches the /api endpoint from the Node.js server and populates the "state" of the app.
+
+Author: Furio Piccinini [Email](furiopiccinini@gmail.com)
+Date: Apr 2022
+Version: 0.3
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
