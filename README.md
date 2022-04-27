@@ -25,7 +25,7 @@ Author: Furio Piccinini [Email](furiopiccinini@gmail.com)
 Date: Apr 2022
 Version: 0.3
 
-# Getting Started with Create React App
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
