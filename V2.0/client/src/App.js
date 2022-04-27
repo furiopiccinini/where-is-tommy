@@ -19,7 +19,7 @@ The project is made with different tecnologies:
 
 At the root we have a Nicla Sense ME firmware to create the motion gestures sensor. Sensor data
 are integrated to the required range of values and converted in a Json 
-string. The string is sent to the host via the USB-Serial interface and captured but a child process of
+string. The string is sent to the host via the USB-Serial interface and captured by HTTP
 the Node.js server.
 
 This App.js is the main React file, which fetches the /api endpoint from the Node.js server and populates the
@@ -103,15 +103,12 @@ class App extends Component{
       // Check incoming signals and update state if different from previous
       if(this.state.right !== incomingJson.right){
         this.setState({right: incomingJson.right});
-      }
-      if(this.state.left !== incomingJson.left){
-        this.setState({left: incomingJson.left});
-      }
-      if(this.state.up !== incomingJson.up){
-        this.setState({up: incomingJson.up});
-      }
-      if(this.state.down !== incomingJson.down){
-        this.setState({down: incomingJson.down});
+        } else if (this.state.left !== incomingJson.left){
+          this.setState({left: incomingJson.left});
+        } else if(this.state.up !== incomingJson.up){
+          this.setState({up: incomingJson.up});
+        } else if(this.state.down !== incomingJson.down){
+          this.setState({down: incomingJson.down});
       }
     });
 
