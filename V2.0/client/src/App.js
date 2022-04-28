@@ -43,6 +43,9 @@ import './App.css';
 import parkingBg from './parking-meter.png';
 import './fonts/LCDN.TTF'; // LCDN font import
 
+let currentBank = 0; // Defines the bank in use 
+let maxBank = 3; // Max number of banks accepted, starting from 0
+
 //main class
 class App extends Component{
   constructor(props){
@@ -63,7 +66,7 @@ class App extends Component{
         reachVal2: false,
         reachVal3: false,
         reachVal4: false,
-        percent: 0.125, // gauge percentage
+        percent: 0.125, // gauge starting percentage
         completed: false, // game completed, so we can show the curtain
         gaugePosition1: 0.125,
         gaugePosition2: 0.38,
@@ -71,6 +74,7 @@ class App extends Component{
         gaugePosition4: 0.89,
         bankCounter: 1,
         selectedBank: 1,
+        bank = [0, 0, 0, 0],
         solution1: 6,
         solution2: 7,
         solution3: 3,
@@ -92,51 +96,68 @@ class App extends Component{
     fetch('http://localhost:9000/api')
     .then((res) => res.json())
     .then((incomingJson) => {
-      // if(JSON.stringify(this.state.actualJson) === JSON.stringify(incomingJson)){
-      //   console.log("JSON is identical");
-      // } else {
-      //   this.setState({
-      //     actualJson: incomingJson
-      //   });
-      // }
 
-      // Check incoming signals and update state if different from previous
-      if(this.state.right !== incomingJson.right){
-        this.setState({right: incomingJson.right});
-        } else if (this.state.left !== incomingJson.left){
-          this.setState({left: incomingJson.left});
-        } else if(this.state.up !== incomingJson.up){
-          this.setState({up: incomingJson.up});
-        } else if(this.state.down !== incomingJson.down){
-          this.setState({down: incomingJson.down});
-      }
+      this.checkIncomingJson();
+      this.bankSelection();
+      this.updateCounters();
     });
+  }
 
-        if(this.state.right){
-          if(this.state.bankCounter <= 4){
-          this.setState({ bankCounter: this.state.bankCounter + 1,
-                          percent: this.state.percent + 25});
-          }
-        } 
-
-        if(this.state.left){
-          if(this.state.bankCounter >= 1){
-          this.setState({ bankCounter: this.state.bankCounter - 1,
-                          percent: this.state.percent - 25});
-          }
-        }
-
-      if(this.state.up){
-        if(this.state.firstVal < 9){
-        this.setState({ firstVal: this.state.firstVal + 1});
-        }
+  // Gets the right or left signal and update the currentBank value,
+  // evaluating it against maxBank limit value
+  bankSelection(){
+    if(this.state.right){
+      currentBank += 1;
+      if(currentBank > maxBank){
+        currentBank = 0;
       }
-
-      if(this.state.down){
-        if(this.state.firstVal > 0){
-        this.setState({ firstVal: this.state.firstVal - 1});
-        }
+    } else if(this.state.left){
+      currentBank -= 1;
+      if(currentBank < 0){
+        currentBank = 3;
       }
+    }
+  }
+
+  updateCounters(){
+          if(this.state.right){
+            if(this.state.bankCounter <= 4){
+            this.setState({ bankCounter: this.state.bankCounter + 1,
+                            percent: this.state.percent + 25});
+            }
+          } 
+
+          if(this.state.left){
+            if(this.state.bankCounter >= 1){
+            this.setState({ bankCounter: this.state.bankCounter - 1,
+                            percent: this.state.percent - 25});
+            }
+          }
+
+          if(this.state.up){
+            if(this.state.firstVal < 9){
+            this.setState({ firstVal: this.state.firstVal + 1});
+            }
+          }
+
+          if(this.state.down){
+            if(this.state.firstVal > 0){
+            this.setState({ firstVal: this.state.firstVal - 1});
+            }
+          }
+    }
+
+  checkIncomingJson(){
+          // Check incoming signals and update state if it's different from previous
+          if(this.state.right !== incomingJson.right){
+            this.setState({right: incomingJson.right});
+            } else if (this.state.left !== incomingJson.left){
+              this.setState({left: incomingJson.left});
+            } else if(this.state.up !== incomingJson.up){
+              this.setState({up: incomingJson.up});
+            } else if(this.state.down !== incomingJson.down){
+              this.setState({down: incomingJson.down});
+          }
   }
 
   componentDidMount(){
@@ -148,7 +169,7 @@ class App extends Component{
   }
 
 render() {
-  var LEDClass = "LED"; // instantiate a LED class for leds, which are turned off.
+  var LEDClass = "LED"; // instantiate a LED class for leds, which are turned off by default.
   return (
     <div className="App">
       <header className="App-header">     
@@ -191,12 +212,7 @@ const Info = () => (
 
 export default App;
 
-
-// if(res.right) {
-//   this.currentBank += res.up
-//    if(this.currentBank > maxBank) 
-//           this,currentBank = 1
-
+// ENRICO'S IDEA
 // if(res.up)
 //      counter[this.bank] += 1
 //       if(counter[this.bank] > 9)
