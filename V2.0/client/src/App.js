@@ -96,7 +96,6 @@ class App extends Component{
     fetch('http://localhost:9000/api')
     .then((res) => res.json())
     .then((incomingJson) => {
-
       this.checkIncomingJson();
       this.bankSelection();
       this.updateCounters();
@@ -128,9 +127,7 @@ class App extends Component{
               const circularCounter = 
               this.setState({ bank: this.state.bank[currentBank] = 0 });
             }
-          }
-
-          if(this.state.down){
+          } else if(this.state.down){
             if(this.state.bank[currentBank] > 0){
             this.setState({ bank: this.state.bank[currentBank] - 1});
             } else {
