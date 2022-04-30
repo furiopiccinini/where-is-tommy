@@ -43,8 +43,9 @@ import './App.css';
 import parkingBg from './parking-meter.png';
 import './fonts/LCDN.TTF'; // LCDN font import
 
-let currentBank = 0; // Defines the bank in use 
+let currentBank = 0; // Defines the first bank in use 
 let maxBank = 3; // Max number of banks accepted, starting from 0
+const incomingJson = {};
 
 //main class
 class App extends Component{
@@ -73,8 +74,7 @@ class App extends Component{
         gaugePosition3: 0.63,
         gaugePosition4: 0.89,
         bankCounter: 1,
-        selectedBank: 1,
-        bank = [0, 0, 0, 0],
+        bank: [0, 0, 0, 0],
         solution1: 6,
         solution2: 7,
         solution3: 3,
@@ -119,30 +119,22 @@ class App extends Component{
     }
   }
 
+  // If up or down signal is given, increment or decrement the counter based on the current bank
   updateCounters(){
-          if(this.state.right){
-            if(this.state.bankCounter <= 4){
-            this.setState({ bankCounter: this.state.bankCounter + 1,
-                            percent: this.state.percent + 25});
-            }
-          } 
-
-          if(this.state.left){
-            if(this.state.bankCounter >= 1){
-            this.setState({ bankCounter: this.state.bankCounter - 1,
-                            percent: this.state.percent - 25});
-            }
-          }
-
           if(this.state.up){
-            if(this.state.firstVal < 9){
-            this.setState({ firstVal: this.state.firstVal + 1});
+            if(this.state.bank[currentBank] < 9){
+            this.setState({ bank: this.state.bank[currentBank] + 1});
+            } else {
+              const circularCounter = 
+              this.setState({ bank: this.state.bank[currentBank] = 0 });
             }
           }
 
           if(this.state.down){
-            if(this.state.firstVal > 0){
-            this.setState({ firstVal: this.state.firstVal - 1});
+            if(this.state.bank[currentBank] > 0){
+            this.setState({ bank: this.state.bank[currentBank] - 1});
+            } else {
+              this.setState({ bank: this.state.bank[currentBank] = 9 });
             }
           }
     }
