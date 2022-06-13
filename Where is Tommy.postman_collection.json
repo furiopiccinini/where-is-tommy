@@ -1,0 +1,55 @@
+{
+	"info": {
+		"_postman_id": "c73247e6-2665-4b6b-bf67-050a2975a3c3",
+		"name": "Where is Tommy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3525131"
+	},
+	"item": [
+		{
+			"name": "POST /api",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"left\": 1,\n    \"right\": 0,\n    \"up\": 0,\n    \"down\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9000/api",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9000/api",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
