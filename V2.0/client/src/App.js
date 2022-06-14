@@ -33,7 +33,7 @@ This App.js is the main React file, which fetches the /api endpoint from the Nod
 */
 
 // Import statements
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import '@fortawesome/fontawesome-svg-core'; // Fontawesome import
 import '@fortawesome/free-regular-svg-icons'; // Fontawesome import
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons"; // Fontawesome import
@@ -45,9 +45,18 @@ import './App.css';
 import parkingBg from './parking-meter.png';
 import './fonts/LCDN.TTF'; // LCDN font import
 
-let currentBank = 0; // Defines the first bank in use 
-let maxBank = 3; // Max number of banks accepted, starting from 0
-const incomingJson = {}; // Empty object, will be used by callAPI method
+var currentBank = 0; // Defines the first bank in use 
+
+var maxBank = 3; // Max number of banks accepted, starting from 0
+
+const defaultEmptyJson = {
+  "left": 0, // Empty object, will be used by callAPI method
+  "right": 0,
+  "up": 0,
+  "down": 0,
+};
+
+var parsedJsonData = {}; // global variable for parsed incoming JSON data from Node server
 
 //main class
 class App extends Component {
@@ -75,7 +84,7 @@ class App extends Component {
       gaugePosition3: 0.63,
       gaugePosition4: 0.89,
       bank: [0, 0, 0, 0], // Bank array, stores the 4 counters
-      solution1: 6, // hardcoded solution for cryptex
+      solution1: 6, // solution for cryptex
       solution2: 7,
       solution3: 3,
       solution4: 6
@@ -96,11 +105,12 @@ class App extends Component {
     fetch('http://localhost:9000/api')
       .then((res) => res.json())
       .then((incomingJson) => {
-        if (incomingJson !== undefined) {
+        if (JSON.stringify(incomingJson) !== JSON.stringify(defaultEmptyJson)) {
+          parsedJsonData = incomingJson;
           this.checkIncomingJson();
           this.bankSelection();
           this.updateCounters();
-          console.log("3 function called");
+          // console.log("3 function called");
         }
       });
   }
@@ -108,30 +118,35 @@ class App extends Component {
   // Gets the right or left signal and update the currentBank value,
   // evaluating it against maxBank limit value
   bankSelection() {
-    if (this.state.right) {
+    if (parsedJsonData.right) {
       currentBank += 1;
-      if (currentBank > maxBank) { // makes it restart from zero
+
+      if (currentBank > maxBank) { // restart from zero
         currentBank = 0;
       }
-    } else if (this.state.left) {
+    } else if (parsedJsonData.left) {
       currentBank -= 1;
-      if (currentBank < 0) { // makes it restart from zero
+      if (currentBank < 0) { // restart from 3
         currentBank = 3;
       }
     }
+    console.log(currentBank);
   }
 
-  // If up or down signal is given, increment or decrement the counter based on the current bank
+  // If up or down signal is given, increment or decrement the counter 
+  // based on the current bank
   updateCounters() {
-    if (this.state.up) {
+    if (parsedJsonData.up) {
       if (this.state.bank[currentBank] < 9) {
-        this.setState({ bank: this.state.bank[currentBank] + 1 });
+        let bankValue = this.state.bank[currentBank] + 1;
+        this.setState({ bank: bankValue });
       } else {
         this.setState({ bank: this.state.bank[currentBank] = 0 });
       }
-    } else if (this.state.down) {
+    } else if (parsedJsonData.down) {
       if (this.state.bank[currentBank] > 0) {
-        this.setState({ bank: this.state.bank[currentBank] - 1 });
+        let bankValue = this.state.bank[currentBank] - 1;
+        this.setState({ bank: bankValue });
       } else {
         this.setState({ bank: this.state.bank[currentBank] = 9 });
       }
@@ -140,14 +155,14 @@ class App extends Component {
 
   checkIncomingJson() {
     // Check incoming signals and update state if it's different from previous
-    if (this.state.right !== incomingJson.right) {
-      this.setState({ right: incomingJson.right });
-    } else if (this.state.left !== incomingJson.left) {
-      this.setState({ left: incomingJson.left });
-    } else if (this.state.up !== incomingJson.up) {
-      this.setState({ up: incomingJson.up });
-    } else if (this.state.down !== incomingJson.down) {
-      this.setState({ down: incomingJson.down });
+    if (this.state.right !== parsedJsonData.right) {
+      this.setState({ right: parsedJsonData.right });
+    } else if (this.state.left !== parsedJsonData.left) {
+      this.setState({ left: parsedJsonData.left });
+    } else if (this.state.up !== parsedJsonData.up) {
+      this.setState({ up: parsedJsonData.up });
+    } else if (this.state.down !== parsedJsonData.down) {
+      this.setState({ down: parsedJsonData.down });
     }
   }
 
@@ -188,8 +203,7 @@ class App extends Component {
             {this.state.completed && <div className='curtain'>Reload the page to start again</div>}
           </div>
         </header>
-        <p>{this.state.right}, {this.state.left}, {this.state.up}, {this.state.down}</p>
-        <p>{this.state.currentBank}</p>
+        <p>{this.state.left}, {this.state.right}, {this.state.up}, {this.state.down}</p>
       </div>
     );
   }
