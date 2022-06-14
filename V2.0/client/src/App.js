@@ -18,16 +18,18 @@ The project is made with different tecnologies:
 
 
 At the root we have a Nicla Sense ME firmware to create the motion gestures sensor. Sensor data
-are integrated to the required range of values and converted in a Json 
-string. The string is sent to the host via the USB-Serial interface and captured by HTTP
+are integrated to the required range of values and converted in a JSON string. 
+The string is sent to the host via the USB-Serial interface and captured by HTTP
 the Node.js server.
 
 This App.js is the main React file, which fetches the /api endpoint from the Node.js server and populates the
 "state" of the app.
 
-\author Furio Piccinini <furiopiccinini@gmail.com>
-\date Apr 2022
-\version 0.3
+\Author Furio Piccinini <furiopiccinini@gmail.com>
+\Date Apr 2022
+\Version 0.3
+\License: Apache
+
 */
 
 // Import statements
@@ -45,7 +47,7 @@ import './fonts/LCDN.TTF'; // LCDN font import
 
 let currentBank = 0; // Defines the first bank in use 
 let maxBank = 3; // Max number of banks accepted, starting from 0
-const incomingJson = {};
+const incomingJson = {}; // Empty object, will be used by callAPI method
 
 //main class
 class App extends Component {
@@ -53,29 +55,27 @@ class App extends Component {
     super(props);
     // Instantiation of app state
     this.state = {
-      right: false,
-      left: false,
-      up: false,
-      down: false,
-      isHidden: true,
+      right: 0, // set all motion variables to false
+      left: 0,
+      up: 0,
+      down: 0,
+      isHidden: 1, // property for '?' help message button, set to true on start
       // hardcoded values for display, to be replaced with JSON values from /api
       firstVal: 9,
       secondVal: 7,
       thirdVal: 3,
       fourthVal: 6,
-      reachVal1: false, // comparison with firstVal, set to True when the counter stops
-      reachVal2: false,
-      reachVal3: false,
-      reachVal4: false,
-      percent: 0.125, // gauge starting percentage
-      completed: false, // game completed, so we can show the curtain
-      gaugePosition1: 0.125,
-      gaugePosition2: 0.38,
+      reachVal1: 0, // comparison with firstVal, set to True when the counter reaches the correct value
+      reachVal2: 0,
+      reachVal3: 0,
+      reachVal4: 0,
+      completed: 0, // game completed, so we can show the curtain, initially set to false
+      gaugePosition1: 0.125, // gauge starting percentage
+      gaugePosition2: 0.38, // Gauge marks to idetify selected bank
       gaugePosition3: 0.63,
       gaugePosition4: 0.89,
-      bankCounter: 1,
-      bank: [0, 0, 0, 0],
-      solution1: 6,
+      bank: [0, 0, 0, 0], // Bank array, stores the 4 counters
+      solution1: 6, // hardcoded solution for cryptex
       solution2: 7,
       solution3: 3,
       solution4: 6
@@ -96,9 +96,12 @@ class App extends Component {
     fetch('http://localhost:9000/api')
       .then((res) => res.json())
       .then((incomingJson) => {
-        this.checkIncomingJson();
-        this.bankSelection();
-        this.updateCounters();
+        if (incomingJson !== undefined) {
+          this.checkIncomingJson();
+          this.bankSelection();
+          this.updateCounters();
+          console.log("3 function called");
+        }
       });
   }
 
@@ -107,12 +110,12 @@ class App extends Component {
   bankSelection() {
     if (this.state.right) {
       currentBank += 1;
-      if (currentBank > maxBank) {
+      if (currentBank > maxBank) { // makes it restart from zero
         currentBank = 0;
       }
     } else if (this.state.left) {
       currentBank -= 1;
-      if (currentBank < 0) {
+      if (currentBank < 0) { // makes it restart from zero
         currentBank = 3;
       }
     }
@@ -124,7 +127,6 @@ class App extends Component {
       if (this.state.bank[currentBank] < 9) {
         this.setState({ bank: this.state.bank[currentBank] + 1 });
       } else {
-        // const circularCounter = 
         this.setState({ bank: this.state.bank[currentBank] = 0 });
       }
     } else if (this.state.down) {
@@ -165,7 +167,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <div className="container">
             <img src={parkingBg} className="bg" alt="foreground" />
-            <CrypIndicator percent={this.state.percent} />
+            <CrypIndicator percent={this.state.gaugePosition1} />
             <div id='led1' className={`${LEDClass} ${this.state.reachVal1 ? "LEDon" : ""}`}></div>
             <div id='led2' className={`${LEDClass} ${this.state.reachVal2 ? "LEDon" : ""}`}></div>
             <div id='led3' className={`${LEDClass} ${this.state.reachVal3 ? "LEDon" : ""}`}></div>
@@ -178,7 +180,7 @@ class App extends Component {
               {/* <CountUp end={this.state.firstVal} onEnd={()=>this.setState({reachVal1: 1})}/>: */}
               <CountUp end={this.state.bank[1]} onEnd={() => this.setState({ reachVal2: 1 })} />:
               <CountUp end={this.state.bank[2]} onEnd={() => this.setState({ reachVal3: 1 })} />:
-              <CountUp end={this.state.bank[3]} onEnd={() => this.setState({ reachVal4: 1, completed: 1 })} />
+              <CountUp end={this.state.bank[3]} onEnd={() => this.setState({ reachVal4: 1, completed: 0 })} />
             </div>
             <div className='half-circle'></div>
             <FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
