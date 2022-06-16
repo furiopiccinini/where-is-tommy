@@ -33,12 +33,11 @@ This App.js is the main React file, which fetches the /api endpoint from the Nod
 */
 
 // Import statements
-import React, { Component, useEffect } from 'react';
+import React, { Component } from 'react';
 import '@fortawesome/fontawesome-svg-core'; // Fontawesome import
 import '@fortawesome/free-regular-svg-icons'; // Fontawesome import
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons"; // Fontawesome import
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Fontawesome import
-import CountUp from 'react-countup'; // react-countup import
 import CrypIndicator from './components/CrypIndicator.js'; // react-gauge-chart component import
 import logo from './logo.svg'; // React logo import
 import './App.css';
@@ -49,8 +48,14 @@ var currentBank = 0; // Defines the first bank in use
 
 var maxBank = 3; // Max number of banks accepted, starting from 0
 
+const solution1 = 6; // Hardcoded solution for cryptex's banks
+const solution2 = 7;
+const solution3 = 3;
+const solution4 = 6;
+
+
 const defaultEmptyJson = {
-  "left": 0, // Empty object, will be used by callAPI method
+  "left": 0, // Empty object, will be used for comparison by callAPI method
   "right": 0,
   "up": 0,
   "down": 0,
@@ -69,25 +74,13 @@ class App extends Component {
       up: 0,
       down: 0,
       isHidden: 1, // property for '?' help message button, set to true on start
-      // hardcoded values for display, to be replaced with JSON values from /api
-      firstVal: 9,
-      secondVal: 7,
-      thirdVal: 3,
-      fourthVal: 6,
       reachVal1: 0, // comparison with firstVal, set to True when the counter reaches the correct value
       reachVal2: 0,
       reachVal3: 0,
       reachVal4: 0,
       completed: 0, // game completed, so we can show the curtain, initially set to false
-      gaugePosition1: 0.125, // gauge starting percentage
-      gaugePosition2: 0.38, // Gauge marks to idetify selected bank
-      gaugePosition3: 0.63,
-      gaugePosition4: 0.89,
-      bank: [0, 0, 0, 0], // Bank array, stores the 4 counters
-      solution1: 6, // solution for cryptex
-      solution2: 7,
-      solution3: 3,
-      solution4: 6
+      gaugePosition: [0.125, 0.38, 0.63, 0.89], // 4 gauge position, based on bank selected
+      bank: [0, 0, 0, 0] // Bank array, stores the 4 counters
     };
   }
 
@@ -110,7 +103,8 @@ class App extends Component {
           this.checkIncomingJson();
           this.bankSelection();
           this.updateCounters();
-          // console.log("3 function called");
+        } else {
+          console.log("No incoming data, or no valid JSON object");
         }
       });
   }
@@ -120,7 +114,6 @@ class App extends Component {
   bankSelection() {
     if (parsedJsonData.right) {
       currentBank += 1;
-
       if (currentBank > maxBank) { // restart from zero
         currentBank = 0;
       }
@@ -130,7 +123,6 @@ class App extends Component {
         currentBank = 3;
       }
     }
-    console.log(currentBank);
   }
 
   // If up or down signal is given, increment or decrement the counter 
@@ -138,17 +130,38 @@ class App extends Component {
   updateCounters() {
     if (parsedJsonData.up) {
       if (this.state.bank[currentBank] < 9) {
-        let bankValue = this.state.bank[currentBank] + 1;
-        this.setState({ bank: bankValue });
+        // let bankValue = this.state.bank[currentBank] + 1;
+        var newArrayUp = this.state.bank;
+        newArrayUp[currentBank] += 1;
+        console.log("array clonato dopo aggiornamento " + [...newArrayUp]);
+        this.setState({ bank: newArrayUp }, () => {
+          this.forceUpdate();
+        });
       } else {
-        this.setState({ bank: this.state.bank[currentBank] = 0 });
+        var zeroArray = [...this.state.bank];
+        zeroArray[currentBank] = 0;
+        console.log(zeroArray[currentBank]);
+        this.setState({ bank: [...zeroArray] });
+        // this.setState({ bank: this.state.bank[currentBank] = 0 });
+        this.forceUpdate();
       }
     } else if (parsedJsonData.down) {
       if (this.state.bank[currentBank] > 0) {
-        let bankValue = this.state.bank[currentBank] - 1;
-        this.setState({ bank: bankValue });
+        var newArrayDown = this.state.bank;
+        newArrayDown[currentBank] -= 1;
+        console.log("array clonato dopo aggiornamento " + [...newArrayDown]);
+        this.setState({ bank: newArrayDown }, () => {
+          this.forceUpdate();
+        });
       } else {
-        this.setState({ bank: this.state.bank[currentBank] = 9 });
+        var nineArray = [...this.state.bank];
+        zeroArray[currentBank] = 9;
+        console.log(nineArray[currentBank]);
+        this.setState({ bank: [...nineArray] });
+        // this.setState({ bank: this.state.bank[currentBank] = 0 });
+        this.forceUpdate();
+        // this.setState({ bank: this.state.bank[currentBank] = 9 });
+
       }
     }
   }
@@ -182,20 +195,16 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <div className="container">
             <img src={parkingBg} className="bg" alt="foreground" />
-            <CrypIndicator percent={this.state.gaugePosition1} />
+            <CrypIndicator percent={this.state.gaugePosition[currentBank]} />
             <div id='led1' className={`${LEDClass} ${this.state.reachVal1 ? "LEDon" : ""}`}></div>
             <div id='led2' className={`${LEDClass} ${this.state.reachVal2 ? "LEDon" : ""}`}></div>
             <div id='led3' className={`${LEDClass} ${this.state.reachVal3 ? "LEDon" : ""}`}></div>
             <div id='led4' className={`${LEDClass} ${this.state.reachVal4 ? "LEDon" : ""}`}></div>
             <div id='box' className='BOX'>
-              <span>{this.state.bank[0]}{this.state.firstVal === this.state.solution1 ? this.setState({ reachVal1: 1 }) : ""}</span>:
-              {/* <span>{this.state.secondVal}{this.state.secondVal===this.state.solution2 ? this.setState({reachVal2: 1}) : "" }</span>:
-            <span>{this.state.thirdVal}{this.state.thirdVal===this.state.solution3 ? this.setState({reachVal3: 1}) : "" }</span>:
-            <span>{this.state.fourthVal}{this.state.fourthVal===this.state.solution4 ? this.setState({reachVal4: 1}) : "" }</span> */}
-              {/* <CountUp end={this.state.firstVal} onEnd={()=>this.setState({reachVal1: 1})}/>: */}
-              <CountUp end={this.state.bank[1]} onEnd={() => this.setState({ reachVal2: 1 })} />:
-              <CountUp end={this.state.bank[2]} onEnd={() => this.setState({ reachVal3: 1 })} />:
-              <CountUp end={this.state.bank[3]} onEnd={() => this.setState({ reachVal4: 1, completed: 0 })} />
+              <span>{this.state.bank[0]}{/*{this.state.bank[0] === solution1 ? this.setState({ reachVal1: 1 }) : ""}*/}</span>:
+              <span>{this.state.bank[1]}{/*{this.state.bank[1]===this.state.solution2 ? this.setState({reachVal2: 1}) : "" }*/}</span>:
+              <span>{this.state.bank[2]}{/*{this.state.bank[2] === this.state.solution3 ? this.setState({ reachVal3: 1 }) : ""}*/}</span>:
+              <span>{this.state.bank[3]}{/*{this.state.bank[3]===this.state.solution4 ? this.setState({reachVal4: 1}) : "" }*/}</span>
             </div>
             <div className='half-circle'></div>
             <FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
