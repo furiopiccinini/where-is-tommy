@@ -53,6 +53,10 @@ const solution2 = 7;
 const solution3 = 3;
 const solution4 = 6;
 
+var reachVal1 = 0;
+var reachVal2 = 0;
+var reachVal3 = 0;
+var reachVal4 = 0;
 
 const defaultEmptyJson = {
   "left": 0, // Empty object, will be used for comparison by callAPI method
@@ -74,10 +78,10 @@ class App extends Component {
       up: 0,
       down: 0,
       isHidden: 1, // property for '?' help message button, set to true on start
-      reachVal1: 0, // comparison with firstVal, set to True when the counter reaches the correct value
-      reachVal2: 0,
-      reachVal3: 0,
-      reachVal4: 0,
+      lreachVal1: 0, // comparison with firstVal, set to True when the counter reaches the correct value
+      lreachVal2: 0,
+      lreachVal3: 0,
+      lreachVal4: 0,
       completed: 0, // game completed, so we can show the curtain, initially set to false
       gaugePosition: [0.125, 0.38, 0.63, 0.89], // 4 gauge position, based on bank selected
       bank: [0, 0, 0, 0] // Bank array, stores the 4 counters
@@ -114,13 +118,17 @@ class App extends Component {
   bankSelection() {
     if (parsedJsonData.right) {
       currentBank += 1;
+      this.forceUpdate();
       if (currentBank > maxBank) { // restart from zero
         currentBank = 0;
+        this.forceUpdate();
       }
     } else if (parsedJsonData.left) {
       currentBank -= 1;
+      this.forceUpdate();
       if (currentBank < 0) { // restart from 3
         currentBank = 3;
+        this.forceUpdate();
       }
     }
   }
@@ -196,15 +204,15 @@ class App extends Component {
           <div className="container">
             <img src={parkingBg} className="bg" alt="foreground" />
             <CrypIndicator percent={this.state.gaugePosition[currentBank]} />
-            <div id='led1' className={`${LEDClass} ${this.state.reachVal1 ? "LEDon" : ""}`}></div>
-            <div id='led2' className={`${LEDClass} ${this.state.reachVal2 ? "LEDon" : ""}`}></div>
-            <div id='led3' className={`${LEDClass} ${this.state.reachVal3 ? "LEDon" : ""}`}></div>
-            <div id='led4' className={`${LEDClass} ${this.state.reachVal4 ? "LEDon" : ""}`}></div>
+            <div id='led1' className={`${LEDClass} ${reachVal1 ? "LEDon" : ""}`}></div>
+            <div id='led2' className={`${LEDClass} ${reachVal2 ? "LEDon" : ""}`}></div>
+            <div id='led3' className={`${LEDClass} ${reachVal3 ? "LEDon" : ""}`}></div>
+            <div id='led4' className={`${LEDClass} ${reachVal4 ? "LEDon" : ""}`}></div>
             <div id='box' className='BOX'>
-              <span>{this.state.bank[0]}{/*{this.state.bank[0] === solution1 ? this.setState({ reachVal1: 1 }) : ""}*/}</span>:
-              <span>{this.state.bank[1]}{/*{this.state.bank[1]===this.state.solution2 ? this.setState({reachVal2: 1}) : "" }*/}</span>:
-              <span>{this.state.bank[2]}{/*{this.state.bank[2] === this.state.solution3 ? this.setState({ reachVal3: 1 }) : ""}*/}</span>:
-              <span>{this.state.bank[3]}{/*{this.state.bank[3]===this.state.solution4 ? this.setState({reachVal4: 1}) : "" }*/}</span>
+              <span>{this.state.bank[0]}{this.state.bank[0] === solution1 ? reachVal1 = 1 : ""}</span>:
+              <span>{this.state.bank[1]}{this.state.bank[1] === solution2 ? reachVal2 = 1 : ""}</span>:
+              <span>{this.state.bank[2]}{this.state.bank[2] === solution3 ? reachVal3 = 1 : ""}</span>:
+              <span>{this.state.bank[3]}{this.state.bank[3] === solution4 ? reachVal4 = 1 : ""}</span>
             </div>
             <div className='half-circle'></div>
             <FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
