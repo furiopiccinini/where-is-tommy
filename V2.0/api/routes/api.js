@@ -1,36 +1,52 @@
+/** @module */
+
+/** Require statements */
 var express = require('express');
 var router = express.Router();
 
-const emptyJson = { // Empty JSON obj, to test against the incoming JSON data
+/** Empty JSON obj, to test against the incoming JSON data 
+ * @global
+*/
+const emptyJson = {
   "left": 0,
   "right": 0,
   "up": 0,
   "down": 0
 };
 
+/** @global */
 var incomingJson = {};
 
-/* POST method */
+/** /api POST method */
 router.post('/', function (req, res) {
-  if (req.body) { // Check if req.body contains data
-    incomingJson = req.body; // Get the req.body object passed by Python program
+  /** Check if req.body contains data */
+  if (req.body) {
+    /** Get the req.body object passed by Python program */
+    incomingJson = req.body;
+    /** Send a response to caller */
     res.send("Incoming JSON data...");
   } else {
+    /** Send an error message */
     res.send("There's a problem on incoming data, body is empty");
   }
 });
 
-/* GET method */
+/** /api GET method */
 router.get('/', function (req, res, next) {
-  // validate the presence of data and forward it when receive a get request to /api
+  /** Validate the presence of data and forward it when receive a get request to /api  
+   * @function */
   function forwardData() {
     try {
-      // console.log(incomingJson);
+      /** Send a JSON response with the data sent by the Python script 
+       * @method
+      */
       res.json(incomingJson);
+      /** Empty the variable, ready for next cycle */
       incomingJson = emptyJson;
     }
     catch (error) {
       console.log(error);
+      /** Send an error response */
       res.send('Error: ', error);
     }
   }
@@ -39,4 +55,5 @@ router.get('/', function (req, res, next) {
 
 });
 
+/** @exports */
 module.exports = router;
