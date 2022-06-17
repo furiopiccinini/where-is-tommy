@@ -7,9 +7,9 @@ The project is made with different tecnologies:
 ###             |
 ###         Python script
 ###             |
-###         Node.js server
+###         Node.js server (served on localhost:9000)
 ###             |
-###         React app
+###         React app (served on localhost:3000)
 
 At the root we have a Nicla Sense ME firmware to create the motion gestures sensor. Sensor data
 are integrated to the required range of values and converted in a Json 
@@ -20,7 +20,7 @@ This App.js is the main React file, which fetches the /api endpoint from the Nod
 
 Author: Furio Piccinini [Email](furiopiccinini@gmail.com)
 Date: Apr 2022
-Version: 0.3
+Version: 0.8.6
 
 ## Node.js server start
 In the api folder, you can run:
