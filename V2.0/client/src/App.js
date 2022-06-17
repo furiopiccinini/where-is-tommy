@@ -18,16 +18,18 @@ The project is made with different tecnologies:
 
 
 At the root we have a Nicla Sense ME firmware to create the motion gestures sensor. Sensor data
-are integrated to the required range of values and converted in a Json 
-string. The string is sent to the host via the USB-Serial interface and captured by HTTP
+are integrated to the required range of values and converted in a JSON string. 
+The string is sent to the host via the USB-Serial interface and captured by HTTP
 the Node.js server.
 
 This App.js is the main React file, which fetches the /api endpoint from the Node.js server and populates the
 "state" of the app.
 
-\author Furio Piccinini <furiopiccinini@gmail.com>
-\date Apr 2022
-\version 0.3
+\Author Furio Piccinini <furiopiccinini@gmail.com>
+\Date Apr 2022
+\Version 0.3
+\License: Apache
+
 */
 
 // Import statements
@@ -36,16 +38,34 @@ import '@fortawesome/fontawesome-svg-core'; // Fontawesome import
 import '@fortawesome/free-regular-svg-icons'; // Fontawesome import
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons"; // Fontawesome import
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Fontawesome import
-import CountUp from 'react-countup'; // react-countup import
 import CrypIndicator from './components/CrypIndicator.js'; // react-gauge-chart component import
 import logo from './logo.svg'; // React logo import
 import './App.css';
 import parkingBg from './parking-meter.png';
 import './fonts/LCDN.TTF'; // LCDN font import
 
-let currentBank = 0; // Defines the first bank in use 
-let maxBank = 3; // Max number of banks accepted, starting from 0
-const incomingJson = {};
+var currentBank = 0; // Defines the first bank in use 
+
+var maxBank = 3; // Max number of banks accepted, starting from 0
+
+const solution1 = 6; // Hardcoded solution for cryptex's banks
+const solution2 = 7;
+const solution3 = 3;
+const solution4 = 6;
+
+var reachVal1 = 0;
+var reachVal2 = 0;
+var reachVal3 = 0;
+var reachVal4 = 0;
+
+const defaultEmptyJson = {
+  "left": 0, // Empty object, will be used for comparison by callAPI method
+  "right": 0,
+  "up": 0,
+  "down": 0,
+};
+
+var parsedJsonData = {}; // global variable for parsed incoming JSON data from Node server
 
 //main class
 class App extends Component {
@@ -53,32 +73,18 @@ class App extends Component {
     super(props);
     // Instantiation of app state
     this.state = {
-      right: false,
-      left: false,
-      up: false,
-      down: false,
-      isHidden: true,
-      // hardcoded values for display, to be replaced with JSON values from /api
-      firstVal: 9,
-      secondVal: 7,
-      thirdVal: 3,
-      fourthVal: 6,
-      reachVal1: false, // comparison with firstVal, set to True when the counter stops
-      reachVal2: false,
-      reachVal3: false,
-      reachVal4: false,
-      percent: 0.125, // gauge starting percentage
-      completed: false, // game completed, so we can show the curtain
-      gaugePosition1: 0.125,
-      gaugePosition2: 0.38,
-      gaugePosition3: 0.63,
-      gaugePosition4: 0.89,
-      bankCounter: 1,
-      bank: [0, 0, 0, 0],
-      solution1: 6,
-      solution2: 7,
-      solution3: 3,
-      solution4: 6
+      right: 0, // set all motion variables to false
+      left: 0,
+      up: 0,
+      down: 0,
+      isHidden: 1, // property for '?' help message button, set to true on start
+      lreachVal1: 0, // comparison with firstVal, set to True when the counter reaches the correct value
+      lreachVal2: 0,
+      lreachVal3: 0,
+      lreachVal4: 0,
+      completed: 0, // game completed, so we can show the curtain, initially set to false
+      gaugePosition: [0.125, 0.38, 0.63, 0.89], // 4 gauge position, based on bank selected
+      bank: [0, 0, 0, 0] // Bank array, stores the 4 counters
     };
   }
 
@@ -96,56 +102,88 @@ class App extends Component {
     fetch('http://localhost:9000/api')
       .then((res) => res.json())
       .then((incomingJson) => {
-        this.checkIncomingJson();
-        this.bankSelection();
-        this.updateCounters();
+        if (JSON.stringify(incomingJson) !== JSON.stringify(defaultEmptyJson)) {
+          parsedJsonData = incomingJson;
+          this.checkIncomingJson();
+          this.bankSelection();
+          this.updateCounters();
+        } else {
+          console.log("No incoming data, or no valid JSON object");
+        }
       });
   }
 
   // Gets the right or left signal and update the currentBank value,
   // evaluating it against maxBank limit value
   bankSelection() {
-    if (this.state.right) {
+    if (parsedJsonData.right) {
       currentBank += 1;
-      if (currentBank > maxBank) {
+      this.forceUpdate();
+      if (currentBank > maxBank) { // restart from zero
         currentBank = 0;
+        this.forceUpdate();
       }
-    } else if (this.state.left) {
+    } else if (parsedJsonData.left) {
       currentBank -= 1;
-      if (currentBank < 0) {
+      this.forceUpdate();
+      if (currentBank < 0) { // restart from 3
         currentBank = 3;
+        this.forceUpdate();
       }
     }
   }
 
-  // If up or down signal is given, increment or decrement the counter based on the current bank
+  // If up or down signal is given, increment or decrement the counter 
+  // based on the current bank
   updateCounters() {
-    if (this.state.up) {
+    if (parsedJsonData.up) {
       if (this.state.bank[currentBank] < 9) {
-        this.setState({ bank: this.state.bank[currentBank] + 1 });
+        // let bankValue = this.state.bank[currentBank] + 1;
+        var newArrayUp = this.state.bank;
+        newArrayUp[currentBank] += 1;
+        console.log("array clonato dopo aggiornamento " + [...newArrayUp]);
+        this.setState({ bank: newArrayUp }, () => {
+          this.forceUpdate();
+        });
       } else {
-        // const circularCounter = 
-        this.setState({ bank: this.state.bank[currentBank] = 0 });
+        var zeroArray = [...this.state.bank];
+        zeroArray[currentBank] = 0;
+        console.log(zeroArray[currentBank]);
+        this.setState({ bank: [...zeroArray] });
+        // this.setState({ bank: this.state.bank[currentBank] = 0 });
+        this.forceUpdate();
       }
-    } else if (this.state.down) {
+    } else if (parsedJsonData.down) {
       if (this.state.bank[currentBank] > 0) {
-        this.setState({ bank: this.state.bank[currentBank] - 1 });
+        var newArrayDown = this.state.bank;
+        newArrayDown[currentBank] -= 1;
+        console.log("array clonato dopo aggiornamento " + [...newArrayDown]);
+        this.setState({ bank: newArrayDown }, () => {
+          this.forceUpdate();
+        });
       } else {
-        this.setState({ bank: this.state.bank[currentBank] = 9 });
+        var nineArray = [...this.state.bank];
+        zeroArray[currentBank] = 9;
+        console.log(nineArray[currentBank]);
+        this.setState({ bank: [...nineArray] });
+        // this.setState({ bank: this.state.bank[currentBank] = 0 });
+        this.forceUpdate();
+        // this.setState({ bank: this.state.bank[currentBank] = 9 });
+
       }
     }
   }
 
   checkIncomingJson() {
     // Check incoming signals and update state if it's different from previous
-    if (this.state.right !== incomingJson.right) {
-      this.setState({ right: incomingJson.right });
-    } else if (this.state.left !== incomingJson.left) {
-      this.setState({ left: incomingJson.left });
-    } else if (this.state.up !== incomingJson.up) {
-      this.setState({ up: incomingJson.up });
-    } else if (this.state.down !== incomingJson.down) {
-      this.setState({ down: incomingJson.down });
+    if (this.state.right !== parsedJsonData.right) {
+      this.setState({ right: parsedJsonData.right });
+    } else if (this.state.left !== parsedJsonData.left) {
+      this.setState({ left: parsedJsonData.left });
+    } else if (this.state.up !== parsedJsonData.up) {
+      this.setState({ up: parsedJsonData.up });
+    } else if (this.state.down !== parsedJsonData.down) {
+      this.setState({ down: parsedJsonData.down });
     }
   }
 
@@ -165,20 +203,16 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <div className="container">
             <img src={parkingBg} className="bg" alt="foreground" />
-            <CrypIndicator percent={this.state.percent} />
-            <div id='led1' className={`${LEDClass} ${this.state.reachVal1 ? "LEDon" : ""}`}></div>
-            <div id='led2' className={`${LEDClass} ${this.state.reachVal2 ? "LEDon" : ""}`}></div>
-            <div id='led3' className={`${LEDClass} ${this.state.reachVal3 ? "LEDon" : ""}`}></div>
-            <div id='led4' className={`${LEDClass} ${this.state.reachVal4 ? "LEDon" : ""}`}></div>
+            <CrypIndicator percent={this.state.gaugePosition[currentBank]} />
+            <div id='led1' className={`${LEDClass} ${reachVal1 ? "LEDon" : ""}`}></div>
+            <div id='led2' className={`${LEDClass} ${reachVal2 ? "LEDon" : ""}`}></div>
+            <div id='led3' className={`${LEDClass} ${reachVal3 ? "LEDon" : ""}`}></div>
+            <div id='led4' className={`${LEDClass} ${reachVal4 ? "LEDon" : ""}`}></div>
             <div id='box' className='BOX'>
-              <span>{this.state.bank[0]}{this.state.firstVal === this.state.solution1 ? this.setState({ reachVal1: 1 }) : ""}</span>:
-              {/* <span>{this.state.secondVal}{this.state.secondVal===this.state.solution2 ? this.setState({reachVal2: 1}) : "" }</span>:
-            <span>{this.state.thirdVal}{this.state.thirdVal===this.state.solution3 ? this.setState({reachVal3: 1}) : "" }</span>:
-            <span>{this.state.fourthVal}{this.state.fourthVal===this.state.solution4 ? this.setState({reachVal4: 1}) : "" }</span> */}
-              {/* <CountUp end={this.state.firstVal} onEnd={()=>this.setState({reachVal1: 1})}/>: */}
-              <CountUp end={this.state.bank[1]} onEnd={() => this.setState({ reachVal2: 1 })} />:
-              <CountUp end={this.state.bank[2]} onEnd={() => this.setState({ reachVal3: 1 })} />:
-              <CountUp end={this.state.bank[3]} onEnd={() => this.setState({ reachVal4: 1, completed: 1 })} />
+              <span>{this.state.bank[0]}{this.state.bank[0] === solution1 ? reachVal1 = 1 : ""}</span>:
+              <span>{this.state.bank[1]}{this.state.bank[1] === solution2 ? reachVal2 = 1 : ""}</span>:
+              <span>{this.state.bank[2]}{this.state.bank[2] === solution3 ? reachVal3 = 1 : ""}</span>:
+              <span>{this.state.bank[3]}{this.state.bank[3] === solution4 ? reachVal4 = 1 : ""}</span>
             </div>
             <div className='half-circle'></div>
             <FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
@@ -186,8 +220,7 @@ class App extends Component {
             {this.state.completed && <div className='curtain'>Reload the page to start again</div>}
           </div>
         </header>
-        <p>{this.state.right}, {this.state.left}, {this.state.up}, {this.state.down}</p>
-        <p>{this.state.currentBank}</p>
+        <p>{this.state.left}, {this.state.right}, {this.state.up}, {this.state.down}</p>
       </div>
     );
   }
