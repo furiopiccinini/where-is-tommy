@@ -139,10 +139,10 @@ class App extends Component {
     if (parsedJsonData.up) {
       if (this.state.bank[currentBank] < 9) {
         // let bankValue = this.state.bank[currentBank] + 1;
-        var newArrayUp = this.state.bank;
+        var newArrayUp = [...this.state.bank];
         newArrayUp[currentBank] += 1;
         console.log("array clonato dopo aggiornamento " + [...newArrayUp]);
-        this.setState({ bank: newArrayUp }, () => {
+        this.setState({ bank: [...newArrayUp] }, () => {
           this.forceUpdate();
         });
       } else {
@@ -150,28 +150,22 @@ class App extends Component {
         zeroArray[currentBank] = 0;
         console.log(zeroArray[currentBank]);
         this.setState({ bank: [...zeroArray] });
-        // this.setState({ bank: this.state.bank[currentBank] = 0 });
         this.forceUpdate();
       }
     } else if (parsedJsonData.down) {
       if (this.state.bank[currentBank] > 0) {
-        var newArrayDown = this.state.bank;
+        var newArrayDown = [...this.state.bank];
         newArrayDown[currentBank] -= 1;
         console.log("array clonato dopo aggiornamento " + [...newArrayDown]);
-        this.setState({ bank: newArrayDown }, () => {
-          this.forceUpdate();
-        });
+        this.setState({ bank: [...newArrayDown] }, () => this.forceUpdate());
       } else {
         var nineArray = [...this.state.bank];
-        zeroArray[currentBank] = 9;
+        nineArray[currentBank] = 9;
         console.log(nineArray[currentBank]);
-        this.setState({ bank: [...nineArray] });
-        // this.setState({ bank: this.state.bank[currentBank] = 0 });
-        this.forceUpdate();
-        // this.setState({ bank: this.state.bank[currentBank] = 9 });
-
+        this.setState({ bank: [...nineArray] }, () => this.forceUpdate());
       }
     }
+    this.checkCompleted();
   }
 
   checkIncomingJson() {
@@ -184,6 +178,16 @@ class App extends Component {
       this.setState({ up: parsedJsonData.up });
     } else if (this.state.down !== parsedJsonData.down) {
       this.setState({ down: parsedJsonData.down });
+    }
+  }
+
+  // Check if 4 reachVal vars are set to True set completed to True, 
+  // which activates curtain effect
+  checkCompleted() {
+    if (reachVal1 && reachVal2 && reachVal3 && reachVal4 === 1) {
+      this.setState({ completed: 1 }, () => this.forceUpdate());
+      console.log("checkCompleted executed");
+      console.log(reachVal1 && reachVal2 && reachVal3 && reachVal4)
     }
   }
 
@@ -220,7 +224,8 @@ class App extends Component {
             {this.state.completed && <div className='curtain'>Reload the page to start again</div>}
           </div>
         </header>
-        <p>{this.state.left}, {this.state.right}, {this.state.up}, {this.state.down}</p>
+        <p>{this.state.completed}</p>
+        {/* <p>{this.state.left}, {this.state.right}, {this.state.up}, {this.state.down}</p> */}
       </div>
     );
   }
@@ -233,12 +238,3 @@ const Info = () => (
 )
 
 export default App;
-
-// ENRICO'S IDEA
-// if(res.up)
-//      counter[this.bank] += 1
-//       if(counter[this.bank] > 9)
-//            counter[this.bank] = 0
-
-//            for(j = 0; j < 4; j++) {
-//      this.counter[j] => aggiorna la grafica
