@@ -42,13 +42,14 @@ serialData = serial.Serial(sPort, 115200)
 
 
 def sendJsonData():
-    url = "http://localhost:9000/api"
+    url = "http://localhost/api"
     dataToSend = jsonData.decode("utf").rstrip("\n")
+    print(dataToSend)
     req = requests.post(url, dataToSend)
 
 
 while True:
     if serialData.inWaiting() > 0:
         jsonData = serialData.readline()
-        print(jsonData.decode("utf").rstrip("\n"))
+        # print(jsonData.decode("utf").rstrip("\n"))
         sendJsonData()

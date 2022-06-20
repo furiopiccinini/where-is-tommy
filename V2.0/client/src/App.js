@@ -82,8 +82,8 @@ var reachVal4 = false;
 /** Default empty JSON object, used for comparison in callAPI() 
  * @global */
 const defaultEmptyJson = {
-  "left": 0,
   "right": 0,
+  "left": 0,
   "up": 0,
   "down": 0,
 };
@@ -275,7 +275,7 @@ class App extends Component {
             <FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
             {!this.state.isHidden && <Info />}
             {this.state.gameCompleted && <div className='curtain'>Reload the page to start again</div>}
-            <p>{this.state.bank[0]}, {this.state.bank[1]}, {this.state.bank[2]}, {this.state.bank[3]}</p>
+            {/* <p>{this.state.bank[0]}, {this.state.bank[1]}, {this.state.bank[2]}, {this.state.bank[3]}</p> */}
           </div>
         </header>
       </div>
