@@ -34,6 +34,7 @@
 from re import X
 import serial.tools.list_ports
 import requests
+import json
 
 sPort = "/dev/cu.usbmodemED1DBDD72"  # On Mac - find this using >ls /dev/cu.usb*
 print("\nSerial data for" + sPort + "\n")
@@ -42,10 +43,13 @@ serialData = serial.Serial(sPort, 115200)
 
 
 def sendJsonData():
-    url = "http://localhost/api"
-    dataToSend = jsonData.decode("utf").rstrip("\n")
-    print(dataToSend)
-    req = requests.post(url, dataToSend)
+    url = "http://localhost:9000/api"
+    headers = {"Content-Type": "application/json"}
+    data = json.dumps(jsonData.decode("utf").rstrip("\r\n"))
+    payloadRaw = data.lstrip('"').rstrip('"')
+    payload = payloadRaw.replace("\\", "")
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print(response.text)
 
 
 while True:

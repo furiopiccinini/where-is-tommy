@@ -23,7 +23,6 @@ router.post('/', function (req, res) {
   if (req.body) {
     /** Get the req.body object passed by Python program */
     incomingJson = req.body;
-    console.log(incomingJson);
     /** Send a response to caller */
     res.send("Incoming JSON data...");
   } else {
