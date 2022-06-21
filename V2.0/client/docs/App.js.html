@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> App.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">My React components</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="App.html">App</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bankSelection">bankSelection</a></li><li><a href="global.html#callAPI">callAPI</a></li><li><a href="global.html#checkCompleted">checkCompleted</a></li><li><a href="global.html#checkIncomingJson">checkIncomingJson</a></li><li><a href="global.html#componentDidMount">componentDidMount</a></li><li><a href="global.html#componentWillUnmount">componentWillUnmount</a></li><li><a href="global.html#CryptIndicator">CryptIndicator</a></li><li><a href="global.html#currentBank">currentBank</a></li><li><a href="global.html#defaultEmptyJson">defaultEmptyJson</a></li><li><a href="global.html#Info">Info</a></li><li><a href="global.html#maxBank">maxBank</a></li><li><a href="global.html#parsedJsonData">parsedJsonData</a></li><li><a href="global.html#reachVal1">reachVal1</a></li><li><a href="global.html#reachVal2">reachVal2</a></li><li><a href="global.html#reachVal3">reachVal3</a></li><li><a href="global.html#reachVal4">reachVal4</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#solution1">solution1</a></li><li><a href="global.html#solution2">solution2</a></li><li><a href="global.html#solution3">solution3</a></li><li><a href="global.html#solution4">solution4</a></li><li><a href="global.html#toggleHidden">toggleHidden</a></li><li><a href="global.html#updateCounters">updateCounters</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>App.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+\brief Tales for Makers - Where is Tommy? \n
+Project: parking meter remake\n
+
+The project is made with different tecnologies:
+
+----- Nicla Sense ME board
+            |
+            |
+        Python script
+            |
+            |
+        Node.js server
+            |
+            |
+        React app
+
+
+
+At the root we have a Nicla Sense ME firmware to create the motion gestures sensor. Sensor data
+are integrated to the required range of values and converted in a JSON string. 
+The string is sent to the host via the USB-Serial interface and captured by HTTP
+the Node.js server.
+
+This App.js is the main React file, which fetches the /api endpoint from the Node.js server and populates the
+"state" of the app.
+In the project root you can find the file named "Where is Tommy.postman_collection.json": this is the exported collection 
+of all the APIs available in the Node.js server, along with an example JSON payload.
+
+This project uses JSDoc and the module better-docs. The configuration is in jsdoc.config.json. To generate the documentation for
+the source, simply run "npm docs". All the documentation will be generated in the "docs" folder.
+
+@author Furio Piccinini &lt;furiopiccinini@gmail.com>
+Date Apr 2022
+@version 0.8.6
+@license: Apache
+
+*/
+
+/**  Import statements */
+import React, { Component } from 'react';
+import '@fortawesome/fontawesome-svg-core'; /*** Fontawesome import */
+import '@fortawesome/free-regular-svg-icons'; /***  Fontawesome import */
+import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons"; /*** Fontawesome import */
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; /*** Fontawesome import */
+import CrypIndicator from './components/CrypIndicator.js'; /*** react-gauge-chart component import */
+import logo from './logo.svg'; /*** React logo import */
+import './App.css';
+import parkingBg from './parking-meter.png';
+import './fonts/LCDN.TTF'; /*** LCDN font import */
+
+/** Holds the current bank, defined in bankSelection() 
+ * @global */
+var currentBank = 0;
+
+/** Holds the max number for banks, starting from 0
+ * @global */
+const maxBank = 3;
+
+/** Hardcoded solution var for the cryptex 
+ * @global */
+const solution1 = 6;
+/** @global */
+const solution2 = 7;
+/** @global */
+const solution3 = 3;
+/** @global */
+const solution4 = 6;
+
+/** Var set to false, to check against the reached value of the counter
+ * @global */
+var reachVal1 = false;
+/** @global */
+var reachVal2 = false;
+/** @global */
+var reachVal3 = false;
+/** @global */
+var reachVal4 = false;
+
+/** Default empty JSON object, used for comparison in callAPI() 
+ * @global */
+const defaultEmptyJson = {
+  "left": 0,
+  "right": 0,
+  "up": 0,
+  "down": 0,
+};
+
+/** Holds the parsed incoming JSON data from Node.js server 
+ * @global */
+var parsedJsonData = {};
+
+/** 
+ * Main App class derived by Component
+ * @class
+ * main class */
+class App extends Component {
+  /** @constructs */
+  constructor(props) {
+    super(props);
+    /** Instantiation of app state 
+     * @params */
+    this.state = {
+      right: 0, /*** set all motion variables to false */
+      left: 0,
+      up: 0,
+      down: 0,
+      isHidden: 1, /** @params Property for '?' help message button, set to true on start */
+      lreachVal1: 0, /*** comparison with firstVal, set to True when the counter reaches the correct value */
+      lreachVal2: 0,
+      lreachVal3: 0,
+      lreachVal4: 0,
+      gameCompleted: 0, /** @params game completed, so we can show the curtain, initially set to false */
+      gaugePosition: [0.125, 0.38, 0.63, 0.89], /** @params Array with 4 gauge position, based on selected bank */
+      bank: [0, 0, 0, 0] /** @params Bank array, stores the 4 counters */
+    };
+  }
+
+  /** Function to toggle visibility of help message under the parking meter, 
+   * based on the state of isHidden
+   * @function toggleHidden */
+  toggleHidden() {
+    this.setState({
+      isHidden: !this.state.isHidden
+    })
+  }
+
+  /**  Function to fetch data from /api and modify the state
+   * with setState method (with a Promise) 
+   * @function callAPI */
+  callAPI() {
+    fetch('http://localhost:9000/api')
+      .then((res) => res.json())
+      .then((incomingJson) => {
+        /** Check if incoming JSON data is different from JSON obj with all zeroes */
+        if (JSON.stringify(incomingJson) !== JSON.stringify(defaultEmptyJson)) {
+          parsedJsonData = incomingJson;
+          this.checkIncomingJson();
+          this.bankSelection();
+          this.updateCounters();
+        } else {
+          console.log("No incoming data, or no valid JSON object");
+        }
+      });
+  }
+
+  /**  Gets the right or left signal and update the currentBank value,
+  * evaluating it against maxBank limit value 
+  @function bankSelection */
+  bankSelection() {
+    /** If right signal is true, increment the bank number */
+    if (parsedJsonData.right) {
+      currentBank += 1;
+      if (currentBank > maxBank) {
+        /** If reached maxBank value, set it to zero */
+        currentBank = 0;
+        this.forceUpdate();
+      }
+    } else if (parsedJsonData.left) {
+      /** If left signal is true, decrement the bank number */
+      currentBank -= 1;
+      if (currentBank &lt; 0) {
+        /** If reached zero, set it to maxBank */
+        currentBank = maxBank;
+        this.forceUpdate();
+      }
+    }
+  }
+
+  /**  If up or down signal is given, increment or decrement the counter 
+   * based on the current bank
+   * @function updateCounters */
+  updateCounters() {
+    if (parsedJsonData.up) {
+      /** With up signal, checks the value of the counter in bank array in the state
+       * and increase it if it's &lt; 9
+       */
+      if (this.state.bank[currentBank] &lt; 9) {
+        var newArrayUp = [...this.state.bank];
+        newArrayUp[currentBank] += 1;
+        this.setState({ bank: [...newArrayUp] });
+      } else {
+        /** Set the counter to zero and update the state */
+        var zeroArray = [...this.state.bank];
+        zeroArray[currentBank] = 0;
+        this.setState({ bank: [...zeroArray] });
+        this.forceUpdate();
+      }
+    } else if (parsedJsonData.down) {
+      /** With down signal, checks the value of the counter in bank array in the state
+      * and decrease it if it's > 0
+      */
+      if (this.state.bank[currentBank] > 0) {
+        var newArrayDown = [...this.state.bank];
+        newArrayDown[currentBank] -= 1;
+        this.setState({ bank: [...newArrayDown] });
+      } else {
+        /** Set the counter to nine and update the state */
+        var nineArray = [...this.state.bank];
+        nineArray[currentBank] = 9;
+        this.setState({ bank: [...nineArray] });
+      }
+    }
+    this.checkCompleted();
+  }
+
+  /**
+   * Check incoming signals and update state if it's different from previous one.
+   * @function checkIncomingJson */
+  checkIncomingJson() {
+    if (this.state.right !== parsedJsonData.right) {
+      this.setState({ right: parsedJsonData.right });
+    } else if (this.state.left !== parsedJsonData.left) {
+      this.setState({ left: parsedJsonData.left });
+    } else if (this.state.up !== parsedJsonData.up) {
+      this.setState({ up: parsedJsonData.up });
+    } else if (this.state.down !== parsedJsonData.down) {
+      this.setState({ down: parsedJsonData.down });
+    }
+  }
+
+  /**  Check if 4 reachVal'X' vars are all set to True, set completed to True, 
+  * which activates curtain effect 
+  * @function checkCompleted */
+  checkCompleted() {
+    if (reachVal1 &amp;&amp; reachVal2 &amp;&amp; reachVal3 &amp;&amp; reachVal4 === true) {
+      this.setState({ gameCompleted: 1 }, () => this.forceUpdate());
+    }
+  }
+  /** React's Lifecycle method.
+   * Set an interval to fire callAPI every 2Hz, only when the interface is loaded.
+   * @function componentDidMount */
+  componentDidMount() {
+    this.intervalID = setInterval(() => this.callAPI(), 500);
+  }
+
+  /** React's Lifecycle method.
+   * Clears the setInterval function opened in componentDidMount()
+  * @function componentWillUnmount */
+  componentWillUnmount() {
+    clearInterval(this.intervalID); // clear the setInterval timer
+  }
+
+  /** Class' render method
+   * @function render */
+  render() {
+    /** Instantiate a LED class for leds, 
+     * which are turned off by default. 
+     * @param */
+    var LEDClass = "LED";
+    return (
+      &lt;div className="App">
+        &lt;header className="App-header">
+          &lt;img src={logo} className="App-logo" alt="logo" />
+          &lt;div className="container">
+            &lt;img src={parkingBg} className="bg" alt="foreground" />
+            &lt;CrypIndicator percent={this.state.gaugePosition[currentBank]} />
+            &lt;div id='led1' className={`${LEDClass} ${reachVal1 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='led2' className={`${LEDClass} ${reachVal2 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='led3' className={`${LEDClass} ${reachVal3 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='led4' className={`${LEDClass} ${reachVal4 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='box' className='BOX'>
+              &lt;span>{this.state.bank[0]}{this.state.bank[0] === solution1 ? reachVal1 = true : ""}&lt;/span>:
+              &lt;span>{this.state.bank[1]}{this.state.bank[1] === solution2 ? reachVal2 = true : ""}&lt;/span>:
+              &lt;span>{this.state.bank[2]}{this.state.bank[2] === solution3 ? reachVal3 = true : ""}&lt;/span>:
+              &lt;span>{this.state.bank[3]}{this.state.bank[3] === solution4 ? reachVal4 = true : ""}&lt;/span>
+            &lt;/div>
+            &lt;div className='half-circle'>&lt;/div>
+            &lt;FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
+            {!this.state.isHidden &amp;&amp; &lt;Info />}
+            {this.state.gameCompleted &amp;&amp; &lt;div className='curtain'>Reload the page to start again&lt;/div>}
+          &lt;/div>
+        &lt;/header>
+      &lt;/div>
+    );
+  }
+}
+
+/** Function to show a modal for help
+ * @function Info */
+const Info = () => (
+  &lt;div className='modal'>
+    &lt;h5>Keep trying, you can do it...&lt;/h5>
+  &lt;/div>
+)
+
+export default App;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

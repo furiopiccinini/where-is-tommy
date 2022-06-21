@@ -1,5 +1,33 @@
-/**
-@summary Tales for Makers - Where is Tommy? \n
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: App.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: App.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+@brief Tales for Makers - Where is Tommy? \n
 Project: parking meter remake\n
 
 The project is made with different tecnologies:
@@ -29,9 +57,9 @@ of all the APIs available in the Node.js server, along with an example JSON payl
 
 This project uses JSDoc as a documentation tool. After installing JSDoc with "npm install -g jsdoc" (global install)
 or with "npm install --save-dev jsdoc" (local install as dev dependency), to generate the documentation for the source 
-simply cd into the client/src folder and run "jsdoc App.js". All the documentation will be generated in the "out" folder.
+simply cd into the src folder and run "jsdoc App.js". All the documentation will be generated in the "out" folder.
 
-@author Furio Piccinini <furiopiccinini@gmail.com>
+@author Furio Piccinini &lt;furiopiccinini@gmail.com>
 Date Apr 2022
 @version 0.8.6
 @license: Apache
@@ -44,7 +72,6 @@ import '@fortawesome/fontawesome-svg-core'; /*** Fontawesome import */
 import '@fortawesome/free-regular-svg-icons'; /***  Fontawesome import */
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons"; /*** Fontawesome import */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; /*** Fontawesome import */
-/** @external */
 import CrypIndicator from './components/CrypIndicator.js'; /*** react-gauge-chart component import */
 import logo from './logo.svg'; /*** React logo import */
 import './App.css';
@@ -82,8 +109,8 @@ var reachVal4 = false;
 /** Default empty JSON object, used for comparison in callAPI() 
  * @global */
 const defaultEmptyJson = {
-  "right": 0,
   "left": 0,
+  "right": 0,
   "up": 0,
   "down": 0,
 };
@@ -95,7 +122,6 @@ var parsedJsonData = {};
 /** 
  * Main App class derived by Component
  * @class
- * @classdesc Main App class derived by Component
  * main class */
 class App extends Component {
   /** @constructs */
@@ -109,15 +135,13 @@ class App extends Component {
       up: 0,
       down: 0,
       isHidden: 1, /** @params Property for '?' help message button, set to true on start */
+      lreachVal1: 0, /*** comparison with firstVal, set to True when the counter reaches the correct value */
+      lreachVal2: 0,
+      lreachVal3: 0,
+      lreachVal4: 0,
       gameCompleted: 0, /** @params game completed, so we can show the curtain, initially set to false */
-      /** @params Array with 4 gauge position, based on selected bank 
-       * @type {Array}
-      */
-      gaugePosition: [0.125, 0.38, 0.63, 0.89],
-      /** @params Bank array, stores the 4 counters 
-       * @type {Array}
-      */
-      bank: [0, 0, 0, 0]
+      gaugePosition: [0.125, 0.38, 0.63, 0.89], /** @params Array with 4 gauge position, based on selected bank */
+      bank: [0, 0, 0, 0] /** @params Bank array, stores the 4 counters */
     };
   }
 
@@ -164,7 +188,7 @@ class App extends Component {
     } else if (parsedJsonData.left) {
       /** If left signal is true, decrement the bank number */
       currentBank -= 1;
-      if (currentBank < 0) {
+      if (currentBank &lt; 0) {
         /** If reached zero, set it to maxBank */
         currentBank = maxBank;
         this.forceUpdate();
@@ -178,9 +202,9 @@ class App extends Component {
   updateCounters() {
     if (parsedJsonData.up) {
       /** With up signal, checks the value of the counter in bank array in the state
-       * and increase it if it's < 9
+       * and increase it if it's &lt; 9
        */
-      if (this.state.bank[currentBank] < 9) {
+      if (this.state.bank[currentBank] &lt; 9) {
         var newArrayUp = [...this.state.bank];
         newArrayUp[currentBank] += 1;
         this.setState({ bank: [...newArrayUp] });
@@ -228,14 +252,13 @@ class App extends Component {
   * which activates curtain effect 
   * @function checkCompleted */
   checkCompleted() {
-    if (reachVal1 && reachVal2 && reachVal3 && reachVal4 === true) {
+    if (reachVal1 &amp;&amp; reachVal2 &amp;&amp; reachVal3 &amp;&amp; reachVal4 === true) {
       this.setState({ gameCompleted: 1 }, () => this.forceUpdate());
     }
   }
   /** React's Lifecycle method.
    * Set an interval to fire callAPI every 2Hz, only when the interface is loaded.
-   * @function componentDidMount 
-   * @fires callAPI to fetch data from Node.js server*/
+   * @function componentDidMount */
   componentDidMount() {
     this.intervalID = setInterval(() => this.callAPI(), 500);
   }
@@ -255,29 +278,29 @@ class App extends Component {
      * @param */
     var LEDClass = "LED";
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <div className="container">
-            <img src={parkingBg} className="bg" alt="foreground" />
-            <CrypIndicator percent={this.state.gaugePosition[currentBank]} />
-            <div id='led1' className={`${LEDClass} ${reachVal1 ? "LEDon" : ""}`}></div>
-            <div id='led2' className={`${LEDClass} ${reachVal2 ? "LEDon" : ""}`}></div>
-            <div id='led3' className={`${LEDClass} ${reachVal3 ? "LEDon" : ""}`}></div>
-            <div id='led4' className={`${LEDClass} ${reachVal4 ? "LEDon" : ""}`}></div>
-            <div id='box' className='BOX'>
-              <span>{this.state.bank[0]}{this.state.bank[0] === solution1 ? reachVal1 = true : ""}</span>:
-              <span>{this.state.bank[1]}{this.state.bank[1] === solution2 ? reachVal2 = true : ""}</span>:
-              <span>{this.state.bank[2]}{this.state.bank[2] === solution3 ? reachVal3 = true : ""}</span>:
-              <span>{this.state.bank[3]}{this.state.bank[3] === solution4 ? reachVal4 = true : ""}</span>
-            </div>
-            <div className='half-circle'></div>
-            <FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
-            {!this.state.isHidden && <Info />}
-            {this.state.gameCompleted && <div className='curtain'>Reload the page to start again</div>}
-          </div>
-        </header>
-      </div>
+      &lt;div className="App">
+        &lt;header className="App-header">
+          &lt;img src={logo} className="App-logo" alt="logo" />
+          &lt;div className="container">
+            &lt;img src={parkingBg} className="bg" alt="foreground" />
+            &lt;CrypIndicator percent={this.state.gaugePosition[currentBank]} />
+            &lt;div id='led1' className={`${LEDClass} ${reachVal1 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='led2' className={`${LEDClass} ${reachVal2 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='led3' className={`${LEDClass} ${reachVal3 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='led4' className={`${LEDClass} ${reachVal4 ? "LEDon" : ""}`}>&lt;/div>
+            &lt;div id='box' className='BOX'>
+              &lt;span>{this.state.bank[0]}{this.state.bank[0] === solution1 ? reachVal1 = true : ""}&lt;/span>:
+              &lt;span>{this.state.bank[1]}{this.state.bank[1] === solution2 ? reachVal2 = true : ""}&lt;/span>:
+              &lt;span>{this.state.bank[2]}{this.state.bank[2] === solution3 ? reachVal3 = true : ""}&lt;/span>:
+              &lt;span>{this.state.bank[3]}{this.state.bank[3] === solution4 ? reachVal4 = true : ""}&lt;/span>
+            &lt;/div>
+            &lt;div className='half-circle'>&lt;/div>
+            &lt;FontAwesomeIcon id="icon" icon={faCircleQuestion} size="xl" onClick={this.toggleHidden.bind(this)} />
+            {!this.state.isHidden &amp;&amp; &lt;Info />}
+            {this.state.gameCompleted &amp;&amp; &lt;div className='curtain'>Reload the page to start again&lt;/div>}
+          &lt;/div>
+        &lt;/header>
+      &lt;/div>
     );
   }
 }
@@ -285,10 +308,32 @@ class App extends Component {
 /** Function to show a modal for help
  * @function Info */
 const Info = () => (
-  <div className='modal'>
-    <h5>Keep trying, you can do it...</h5>
-  </div>
+  &lt;div className='modal'>
+    &lt;h5>Keep trying, you can do it...&lt;/h5>
+  &lt;/div>
 )
 
-/** @exports */
 export default App;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bankSelection">bankSelection</a></li><li><a href="global.html#callAPI">callAPI</a></li><li><a href="global.html#checkCompleted">checkCompleted</a></li><li><a href="global.html#checkIncomingJson">checkIncomingJson</a></li><li><a href="global.html#componentDidMount">componentDidMount</a></li><li><a href="global.html#componentWillUnmount">componentWillUnmount</a></li><li><a href="global.html#currentBank">currentBank</a></li><li><a href="global.html#defaultEmptyJson">defaultEmptyJson</a></li><li><a href="global.html#Info">Info</a></li><li><a href="global.html#maxBank">maxBank</a></li><li><a href="global.html#parsedJsonData">parsedJsonData</a></li><li><a href="global.html#reachVal1">reachVal1</a></li><li><a href="global.html#reachVal2">reachVal2</a></li><li><a href="global.html#reachVal3">reachVal3</a></li><li><a href="global.html#reachVal4">reachVal4</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#solution1">solution1</a></li><li><a href="global.html#solution2">solution2</a></li><li><a href="global.html#solution3">solution3</a></li><li><a href="global.html#solution4">solution4</a></li><li><a href="global.html#toggleHidden">toggleHidden</a></li><li><a href="global.html#updateCounters">updateCounters</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Jun 17 2022 16:31:06 GMT+0200 (Ora legale dell’Europa centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
