@@ -12,7 +12,7 @@
 Polling frequency to read the sensors. This is the base (minimum) reading frequency
 to which is added the trimmer fine tuning reading value, never bigger than MAX_POLL_FREQ
 */
-#define POLL_FREQ 100
+#define POLL_FREQ 20
 /** Maximum polling requency (in millseconds) */
 #define MAX_POLL_FREQ 250
 
@@ -20,7 +20,8 @@ to which is added the trimmer fine tuning reading value, never bigger than MAX_P
 #define POT_MIN 0
 /** Maximum analog value read from potentiometer (need calibration) */
 #define POT_MAX 1023
-
+/** Value for pause in sampling, expressed as a delay, to avoid multiple readings */
+#define samplePause 350
 /**
 Minimum delta value between two sequential readings to consider
 the motion as a gesture. Delta reading is the absolute difference between two

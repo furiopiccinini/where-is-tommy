@@ -150,6 +150,7 @@ void loop()
     }
   }
 #endif // Calibration
+delay(samplePause);
 }
 
 // -------------------------------------------------------------
